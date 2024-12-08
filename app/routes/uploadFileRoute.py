@@ -9,10 +9,23 @@ import gridfs
 from app.eventhandler.deleteFileEventHandler import DELETED_FILE_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
 from app.eventhandler.uploadedFileEventHandler import UPLOADED_FILE_TOPIC_NAME
+from app.pinecone import get_assistant_file
 
 fs = gridfs.GridFS(db)
 
 upload_file_router = APIRouter()
+@upload_file_router.get("/file")
+async def get_file():
+    try:
+        resp = get_assistant_file()
+
+        if resp.status_code != 200:
+            raise Exception("Failed to get file from pinecone assistant")
+
+        return resp.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+
 @upload_file_router.post("/file/pdf")
 async def upload_file(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
