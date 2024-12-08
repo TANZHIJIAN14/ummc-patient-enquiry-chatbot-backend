@@ -36,6 +36,13 @@ def upload_file(file_name, file_data):
     files = {"file": (file_name, file_data)}
     return requests.post(url, files=files, headers=headers)
 
+def delete_file(file_id):
+    url = f"https://prod-1-data.ke.pinecone.io/assistant/files/{PINECONE_ASSISTANCE_NAME}/{file_id}"
+    headers = {
+        "Api-Key": config("PINECONE_API_KEY")
+    }
+    return requests.delete(url, headers=headers)
+
 def assistant_chat(messages):
     url = f"https://prod-1-data.ke.pinecone.io/assistant/chat/{PINECONE_ASSISTANCE_NAME}"
     headers = {

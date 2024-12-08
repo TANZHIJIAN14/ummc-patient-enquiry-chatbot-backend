@@ -1,12 +1,11 @@
 from confluent_kafka import Consumer, KafkaException, KafkaError
 from bson import ObjectId
 from app.database import uploaded_file_collection
-from app.eventhandler.kafkaConfig import TOPIC_MAP
 from app.pinecone import upload_file
 
 # Kafka configuration
 KAFKA_BROKER = "localhost:9092"  # Kafka broker address
-TOPIC_NAME = TOPIC_MAP["uploaded-file"]  # Kafka topic
+UPLOADED_FILE_TOPIC_NAME = "UploadedFile"  # Kafka topic
 GROUP_ID = "file-processing-group"  # Consumer group ID
 
 def upload_file_to_assistance(file_doc):
@@ -20,10 +19,10 @@ def upload_file_to_assistance(file_doc):
         raise Exception("Failed to upload file to pinecone assistant")
 
     print(f"Successfully upload file to pinecone assistant: {response.json()}")
-    return response["id"]
+    return response.json()["id"]
 
 
-class FileProcessor:
+class UploadFileProcessor:
     def __init__(self):
         # Initialize MongoDB client
         self.collection = uploaded_file_collection
@@ -51,9 +50,9 @@ class FileProcessor:
 
     def consume_messages(self):
         """Consume messages from Kafka and process the file."""
-        self.consumer.subscribe([TOPIC_NAME])
+        self.consumer.subscribe([UPLOADED_FILE_TOPIC_NAME])
 
-        print(f"Consuming messages from Kafka topic: {TOPIC_NAME}")
+        print(f"Consuming messages from Kafka topic: {UPLOADED_FILE_TOPIC_NAME}")
 
         try:
             while True:
@@ -79,21 +78,22 @@ class FileProcessor:
                 file_doc = self.get_file_by_id(file_id)
                 if file_doc:
                     uploaded_file_id = upload_file_to_assistance(file_doc)
+                    # Convert file_id to ObjectId
+                    object_id = ObjectId(file_id)
                     # Query the record by its ID
-                    query = {"_id": file_id}
+                    query = {"_id": object_id}
                     update = {
                         "$set": {
                             "uploaded_file_id": uploaded_file_id  # Add or update the uploaded_file_id
                         }
                     }
                     self.collection.update_one(query, update, upsert=True)
-
-
         except KeyboardInterrupt:
             print("Kafka consumer interrupted.")
         finally:
             self.consumer.close()
 
-def init_event_listener():
-    processor = FileProcessor()
-    processor.consume_messages()
+def init_upload_file_event_listener():
+    # Upload file processor
+    upload_processor = UploadFileProcessor()
+    upload_processor.consume_messages()

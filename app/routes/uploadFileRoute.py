@@ -1,16 +1,20 @@
 from datetime import datetime
+
+from bson import ObjectId
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.database import uploaded_file_collection, db
 from bson.binary import Binary
 import gridfs
+
+from app.eventhandler.deleteFileEventHandler import DELETED_FILE_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
-from app.eventhandler.uploadedFileEventHandler import TOPIC_NAME
+from app.eventhandler.uploadedFileEventHandler import UPLOADED_FILE_TOPIC_NAME
 
 fs = gridfs.GridFS(db)
 
 upload_file_router = APIRouter()
-@upload_file_router.post("/small-file/pdf")
-async def upload_small_file(file: UploadFile = File(...)):
+@upload_file_router.post("/file/pdf")
+async def upload_file(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
 
@@ -33,7 +37,7 @@ async def upload_small_file(file: UploadFile = File(...)):
         if result.inserted_id is None:
             print("Insertion of file failed or the document was not inserted.")
 
-        produce_message(TOPIC_NAME, "file-id", result.inserted_id)
+        produce_message(UPLOADED_FILE_TOPIC_NAME, "file-id", result.inserted_id)
 
         return {
             "message": "File uploaded successfully",
@@ -43,22 +47,28 @@ async def upload_small_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
 
-
-@upload_file_router.post("/large-file/pdf")
-async def upload_large_file(file: UploadFile = File(...)):
-    if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
-
+@upload_file_router.delete("/file/pdf")
+async def delete_file(file_id: str):
+    """
+    Delete a file record from MongoDB based on the provided file_id.
+    """
     try:
-        # Read file content
-        file_content = await file.read()
+        # Convert file_id to ObjectId
+        object_id = ObjectId(file_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid file_id format. Must be a valid ObjectId.")
 
-        # Upload to GridFS
-        file_id = fs.put(file_content, filename=file.filename, contentType=file.content_type, metadata={
-            "uploaded_at": datetime.now()
-        })
+    # Query to find the record
+    query = {"_id": object_id}
 
-        return {"message": "File uploaded successfully", "file_id": str(file_id)}
+    file = uploaded_file_collection.find_one(query)
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+    produce_message(DELETED_FILE_TOPIC_NAME, "file-id", file["uploaded_file_id"])
+
+    # Attempt to delete the record
+    result = uploaded_file_collection.delete_one(query)
+
+    if result.deleted_count == 1:
+        return {"message": f"File with ID {file_id} successfully deleted."}
+    else:
+        raise HTTPException(status_code=404, detail=f"File with ID {file_id} not found.")

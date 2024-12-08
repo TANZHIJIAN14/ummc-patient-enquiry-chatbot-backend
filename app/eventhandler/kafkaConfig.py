@@ -1,10 +1,10 @@
 # Kafka configuration
 from confluent_kafka import Producer
 
+from app.eventhandler.deleteFileEventHandler import DeleteFileProcessor
+from app.eventhandler.uploadedFileEventHandler import UploadFileProcessor
+
 KAFKA_BROKER = "localhost:9092"  # Replace with your Kafka broker address
-TOPIC_MAP = {
-    "uploaded-file": "UploadedFile"
-}
 
 # Create a Kafka producer
 producer = Producer({"bootstrap.servers": KAFKA_BROKER})
@@ -28,6 +28,6 @@ def produce_message(topic, key, value):
         )
         # Flush to ensure the message is sent
         producer.flush()
-        print(f"Successfully publish UploadedFile event with ID: {value}")
+        print(f"Successfully publish {topic} event with ID: {value}")
     except Exception as e:
         print(f"Failed to produce message: {e}")
