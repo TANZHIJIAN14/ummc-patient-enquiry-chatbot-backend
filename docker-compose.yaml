@@ -12,10 +12,10 @@ services:
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
+    mem_limit: 2g
     ports:
       - "9092:9092"
     environment:
-      KAFKA_HEAP_OPTS: -Xmx1G -Xms1G
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
