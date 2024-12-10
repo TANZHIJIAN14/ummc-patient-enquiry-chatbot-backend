@@ -1,10 +1,9 @@
 # Kafka configuration
 from confluent_kafka import Producer
 
-from app.eventhandler.deleteFileEventHandler import DeleteFileProcessor
-from app.eventhandler.uploadedFileEventHandler import UploadFileProcessor
+from app.config import config
 
-KAFKA_BROKER = "localhost:9092"  # Replace with your Kafka broker address
+KAFKA_BROKER = config("KAFKA_BROKER") # Replace with your Kafka broker address
 
 # Create a Kafka producer
 producer = Producer({"bootstrap.servers": KAFKA_BROKER})
