@@ -26,6 +26,7 @@ class MessageResp(BaseModel):
 # Chat Room Schema
 class ChatRoom(BaseModel):
     id: str = Field(..., description="Unique identifier for the chat room")
+    chat_room_id: str
     user_id: str = Field(..., description="Unique identifier of the associated user")
     created_at: datetime = Field(default_factory=datetime.now, description="Timestamp of chat room creation")
     status: Literal["active", "closed"] = Field(default="active", description="Status of the chat room")

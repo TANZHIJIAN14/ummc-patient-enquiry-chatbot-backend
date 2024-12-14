@@ -30,13 +30,17 @@ async def get_chat_room(user_id = Header()):
 
 @chat_router.get("/chat-room/{chat_room_id}", response_model=ChatRoom)
 async def get_chat_room(chat_room_id, user_id = Header()):
+    # Validate user_id header
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User ID header is required.")
+
     if not chat_room_id:
-        raise ValueError("Chat room ID must be provided.")
+        raise HTTPException(status_code=400, detail="Chat room id is required.")
 
     query = {
         "$and": [
-            {"chatRoomId": {"$eq": chat_room_id}},
-            {"userId": {"$eq": user_id}}
+            {"chat_room_id": {"$eq": chat_room_id}},
+            {"user_id": {"$eq": user_id}}
         ]
     }
     chat_room = chat_room_collection.find_one(query)
@@ -46,7 +50,7 @@ async def get_chat_room(chat_room_id, user_id = Header()):
 
     # Extract and validate the fields
     object_id = str(chat_room.get("_id"))
-    user_id = str(chat_room.get("userId"))
+    user_id = str(chat_room.get("user_id"))
     status = str(chat_room.get("status"))
     messages = chat_room.get("messages")
     created_at = chat_room.get("created_at")
@@ -59,6 +63,34 @@ async def get_chat_room(chat_room_id, user_id = Header()):
         status=status,
         messages=messages
     )
+
+@chat_router.delete("/{chat_room_id}")
+async def delete_chat_room(chat_room_id, user_id = Header()):
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User ID header is required.")
+
+    if not chat_room_id:
+        raise HTTPException(status_code=400, detail="Chat room id is required.")
+
+    query = {
+        "$and": [
+            {"chat_room_id": {"$eq": chat_room_id}},
+            {"user_id": {"$eq": user_id}}
+        ]
+    }
+    chat_room = chat_room_collection.find_one(query)
+
+    if chat_room is None:
+        raise NotFoundException(404, f"Chat room with ID: {chat_room_id} is not found")
+
+    result = chat_room_collection.delete_one(query)
+
+    if result.deleted_count == 0:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to delete the chat room with ID: {chat_room_id} of user ID: {user_id}")
+
+    return {"message": f"Chat room: {chat_room_id} of user ID: {user_id} has been successfully deleted."}
 
 @chat_router.post("/", response_model=MessageResp)
 async def chat(request: MessageReq):
@@ -110,7 +142,7 @@ async def chat(request: MessageReq):
 def get_history_chat(chat_room_id: str, user_id: str):
     # Query chat history from MongoDB
     chat_room = chat_room_collection.find_one(
-        {"chatRoomId": chat_room_id, "userId": user_id, "status": "active"}
+        {"chat_room_id": chat_room_id, "user_id": user_id, "status": "active"}
     )
 
     chat_history = ""
@@ -136,8 +168,8 @@ def persist_prompt(chatroom_id: str, user_id: str, message: str, sender_type: st
     # Update the chat room's messages array
     chat_room_collection.update_one(
         {
-            "chatRoomId": chatroom_id,
-            "userId": user_id,
+            "chat_room_id": chatroom_id,
+            "user_id": user_id,
             "status": "active"
         },
         {
