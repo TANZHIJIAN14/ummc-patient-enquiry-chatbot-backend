@@ -20,7 +20,7 @@ async def get_chat_room(user_id = Header()):
         chat_rooms = [transform_mongo_document(doc) for doc in cursor]
 
         if not chat_rooms:
-            raise HTTPException(status_code=404, detail="No chat rooms found for the given user ID.")
+            return []
 
         return chat_rooms
 
