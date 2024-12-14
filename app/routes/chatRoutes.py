@@ -1,22 +1,43 @@
 import json
 from datetime import datetime
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from pinecone_plugins.assistant.data.core.client.exceptions import NotFoundException
 from app.database import chat_room_collection
-from app.model.chatModels import MessageResp, MessageReq, ChatRoom
+from app.model.chatModels import MessageResp, MessageReq, ChatRoom, transform_mongo_document
 from app.model.pineconeModel import Reference
 from app.pinecone import assistant_chat
 
 chat_router = APIRouter()
+@chat_router.get("/chat-room", response_model=list[ChatRoom])
+async def get_chat_room(user_id = Header()):
+    # Validate user_id header
+    if not user_id:
+        raise HTTPException(status_code=400, detail="User ID header is required.")
+
+    try:
+        query = {"user_id": user_id}
+        cursor = chat_room_collection.find(query)
+        chat_rooms = [transform_mongo_document(doc) for doc in cursor]
+
+        if not chat_rooms:
+            raise HTTPException(status_code=404, detail="No chat rooms found for the given user ID.")
+
+        return chat_rooms
+
+    except Exception as e:
+        # Catch any unexpected errors and return a 500 status
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
 @chat_router.get("/chat-room/{chat_room_id}", response_model=ChatRoom)
-async def get_chat_room(chat_room_id):
+async def get_chat_room(chat_room_id, user_id = Header()):
     if not chat_room_id:
         raise ValueError("Chat room ID must be provided.")
 
     query = {
-        "chatRoomId": {
-            "$eq" : chat_room_id
-        }
+        "$and": [
+            {"chatRoomId": {"$eq": chat_room_id}},
+            {"userId": {"$eq": user_id}}
+        ]
     }
     chat_room = chat_room_collection.find_one(query)
 

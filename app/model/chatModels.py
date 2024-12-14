@@ -30,3 +30,13 @@ class ChatRoom(BaseModel):
     created_at: datetime = Field(default_factory=datetime.now, description="Timestamp of chat room creation")
     status: Literal["active", "closed"] = Field(default="active", description="Status of the chat room")
     messages: List[MessageResp] = Field(default_factory=list, description="List of messages in the chat room")
+
+# Helper Function to Transform MongoDB `_id` to `id`
+def transform_mongo_document(document):
+    """
+    Transform MongoDB document (_id -> id).
+    """
+    if "_id" in document:
+        document["id"] = str(document["_id"])  # Convert ObjectId to string
+        del document["_id"]  # Remove _id from the response
+    return document
