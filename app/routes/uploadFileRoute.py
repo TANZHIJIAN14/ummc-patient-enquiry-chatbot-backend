@@ -1,7 +1,10 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from bson import ObjectId
 from fastapi import APIRouter, UploadFile, File, HTTPException
+from starlette.responses import JSONResponse
+
 from app.database import uploaded_file_collection, db
 from bson.binary import Binary
 import gridfs
@@ -9,6 +12,7 @@ import gridfs
 from app.eventhandler.deleteFileEventHandler import DELETED_FILE_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
 from app.eventhandler.uploadedFileEventHandler import UPLOADED_FILE_TOPIC_NAME
+from app.model import ProblemDetail
 from app.pinecone import get_assistant_file
 
 fs = gridfs.GridFS(db)
@@ -20,16 +24,40 @@ async def get_file():
         resp = get_assistant_file()
 
         if resp.status_code != 200:
-            raise Exception("Failed to get file from pinecone assistant")
+            return JSONResponse(
+                status_code=resp.status_code,
+                content=ProblemDetail(
+                    type="chat/file",
+                    title="Internal server error",
+                    details="Failed to get file from pinecone assistant",
+                    status=resp.status_code
+                ).model_dump()
+            )
 
         return resp.json()
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="chat/file",
+                title="Internal server error",
+                details=f"An error occurred: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
 
 @upload_file_router.post("/file/pdf")
 async def upload_file(file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Only PDF files are allowed.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="chat/file/pdf",
+                title="Invalid file format",
+                details="Only PDF files are allowed.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     try:
         # Read file content
@@ -58,7 +86,15 @@ async def upload_file(file: UploadFile = File(...)):
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {e}")
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="chat/file/pdf",
+                title="Internal server error",
+                details=f"An error occurred: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
 
 @upload_file_router.delete("/file/pdf")
 async def delete_file(file_id: str):
@@ -69,7 +105,15 @@ async def delete_file(file_id: str):
         # Convert file_id to ObjectId
         object_id = ObjectId(file_id)
     except Exception:
-        raise HTTPException(status_code=400, detail="Invalid file_id format. Must be a valid ObjectId.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="chat/file/pdf",
+                title="Invalid object id",
+                details="Invalid file_id format. Must be a valid ObjectId.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     # Query to find the record
     query = {"_id": object_id}
@@ -84,4 +128,12 @@ async def delete_file(file_id: str):
     if result.deleted_count == 1:
         return {"message": f"File with ID {file_id} successfully deleted."}
     else:
-        raise HTTPException(status_code=404, detail=f"File with ID {file_id} not found.")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND.value,
+            content=ProblemDetail(
+                type="chat/file/pdf",
+                title="Not found",
+                details=f"File with ID {file_id} not found.",
+                status=HTTPStatus.NOT_FOUND.value
+            ).model_dump()
+        )
