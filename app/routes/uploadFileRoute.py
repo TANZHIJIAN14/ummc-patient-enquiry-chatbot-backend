@@ -1,3 +1,4 @@
+import os
 from datetime import datetime
 from http import HTTPStatus
 
@@ -14,6 +15,7 @@ from app.eventhandler.kafkaConfig import produce_message
 from app.eventhandler.uploadedFileEventHandler import UPLOADED_FILE_TOPIC_NAME
 from app.model import ProblemDetail
 from app.pinecone import get_assistant_file
+from util import serialize_mongo_document
 
 fs = gridfs.GridFS(db)
 
@@ -21,20 +23,8 @@ upload_file_router = APIRouter()
 @upload_file_router.get("/file")
 async def get_file():
     try:
-        resp = get_assistant_file()
-
-        if resp.status_code != 200:
-            return JSONResponse(
-                status_code=resp.status_code,
-                content=ProblemDetail(
-                    type="chat/file",
-                    title="Internal server error",
-                    details="Failed to get file from pinecone assistant",
-                    status=resp.status_code
-                ).model_dump()
-            )
-
-        return resp.json()
+        all_uploaded_files = uploaded_file_collection.find()
+        return [serialize_mongo_document(doc) for doc in all_uploaded_files]
     except Exception as e:
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
@@ -47,7 +37,7 @@ async def get_file():
         )
 
 @upload_file_router.post("/file/pdf")
-async def upload_file(file: UploadFile = File(...)):
+async def upload_file(gradio_file_path: str, file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
         return JSONResponse(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
@@ -65,7 +55,8 @@ async def upload_file(file: UploadFile = File(...)):
 
         # Create a document for the file
         file_document = {
-            "filename": file.filename,
+            "gradio_file_path": gradio_file_path,
+            "filename": os.path.basename(file.filename),
             "content_type": file.content_type,
             "size": len(file_content),
             "status": "Processing",

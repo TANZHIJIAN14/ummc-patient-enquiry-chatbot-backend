@@ -1,7 +1,11 @@
+import time
+from http import HTTPStatus
+
+import requests
 from confluent_kafka import Consumer, KafkaException, KafkaError
 from bson import ObjectId
 from app.database import uploaded_file_collection
-from app.pinecone import upload_file
+from app.pinecone import upload_file, subscribe_file
 
 # Kafka configuration
 KAFKA_BROKER = "localhost:9092"  # Kafka broker address
@@ -15,11 +19,34 @@ def upload_file_to_assistance(file_doc):
 
     print(file_name)
     response = upload_file(file_name, file_data)
-    if response is None:
-        raise Exception("Failed to upload file to pinecone assistant")
+    if response.status_code != HTTPStatus.OK.value:
+        raise Exception(f"Failed to upload file to pinecone assistant: {response.json()}")
 
     print(f"Successfully upload file to pinecone assistant: {response.json()}")
     return response.json()["id"]
+
+def poll_subscription_status(mongodb_file_id, max_attempts=20, delay=5):
+    for attempt in range(max_attempts):
+        try:
+            response = subscribe_file(mongodb_file_id)  # Set the timeout here
+            response.raise_for_status()  # Raise an error for failed requests
+            status = response.json() # Assuming the response contains a JSON payload with status info
+
+            print(f"Attempt {attempt + 1}: Status - {status}")
+
+            # Check if the desired condition is met
+            if status.get("status") != "Processing":
+                return status
+
+        except requests.exceptions.Timeout:
+            print(f"Attempt {attempt + 1}: Request timed out.")
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {attempt + 1}: An error occurred - {e}")
+
+        # Wait for the next polling attempt
+        time.sleep(delay)
+
+    raise TimeoutError(f"Polling timed out after {max_attempts} attempts.")
 
 
 class UploadFileProcessor:
@@ -35,12 +62,12 @@ class UploadFileProcessor:
             "enable.auto.commit": True
         })
 
-    def get_file_by_id(self, file_id):
+    def get_file_by_id(self, mongodb_file_id):
         """Retrieve the file from MongoDB by its ID."""
         try:
-            file_doc = self.collection.find_one({"_id": ObjectId(file_id)})
+            file_doc = self.collection.find_one({"_id": ObjectId(mongodb_file_id)})
             if not file_doc:
-                print(f"File with ID {file_id} not found.")
+                print(f"File with ID {mongodb_file_id} not found.")
                 return None
 
             return file_doc
@@ -72,19 +99,24 @@ class UploadFileProcessor:
                 print(f"Received message: {message_value}")
 
                 # Assume the message contains the file ID
-                file_id = message_value.strip()  # File ID
+                mongodb_file_id = message_value.strip()  # File ID
 
                 # Retrieve and process the file
-                file_doc = self.get_file_by_id(file_id)
+                file_doc = self.get_file_by_id(mongodb_file_id)
                 if file_doc:
                     uploaded_file_id = upload_file_to_assistance(file_doc)
-                    # Convert file_id to ObjectId
-                    object_id = ObjectId(file_id)
+                    metadata = poll_subscription_status(uploaded_file_id)
+
+                    # Convert mongodb_file_id to ObjectId
+                    object_id = ObjectId(mongodb_file_id)
+
                     # Query the record by its ID
                     query = {"_id": object_id}
                     update = {
                         "$set": {
-                            "uploaded_file_id": uploaded_file_id  # Add or update the uploaded_file_id
+                            "uploaded_file_id": uploaded_file_id,
+                            "status": metadata["status"],
+                            "metadata": metadata
                         }
                     }
                     self.collection.update_one(query, update, upsert=True)
