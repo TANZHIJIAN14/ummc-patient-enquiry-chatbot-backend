@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Implement upload feedback endpoint">
+    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Enhance upload file endpoint exception handling">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes/uploadFileRoute.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/uploadFileRoute.py" afterDir="false" />
     </list>
@@ -171,7 +171,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734362679643</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Enhance upload file endpoint exception handling">
+      <option name="closed" value="true" />
+      <created>1734531812643</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1734531812643</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -187,6 +195,7 @@
     <MESSAGE value="Implement delete chat room endpoint" />
     <MESSAGE value="Enhance get chat room logic" />
     <MESSAGE value="Implement upload feedback endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement upload feedback endpoint" />
+    <MESSAGE value="Enhance upload file endpoint exception handling" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance upload file endpoint exception handling" />
   </component>
 </project>

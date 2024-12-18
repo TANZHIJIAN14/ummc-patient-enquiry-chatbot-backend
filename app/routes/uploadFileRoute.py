@@ -68,6 +68,7 @@ async def upload_file(file: UploadFile = File(...)):
             "filename": file.filename,
             "content_type": file.content_type,
             "size": len(file_content),
+            "status": "Processing",
             "uploaded_at": datetime.now(),
             "file_data": Binary(file_content)
         }
@@ -86,6 +87,7 @@ async def upload_file(file: UploadFile = File(...)):
         }
 
     except Exception as e:
+        print(f"An error occurred: {e}")
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             content=ProblemDetail(
