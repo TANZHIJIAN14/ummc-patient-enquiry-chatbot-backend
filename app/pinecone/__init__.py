@@ -20,6 +20,14 @@ def upload_file(file_name, file_data):
     files = {"file": (file_name, file_data)}
     return requests.post(url, files=files, headers=headers)
 
+def subscribe_file(assistant_file_id):
+    # Subscribe a file.
+    url = f"https://prod-1-data.ke.pinecone.io/assistant/files/{PINECONE_ASSISTANCE_NAME}/{assistant_file_id}"
+    headers = {
+        "Api-Key": config("PINECONE_API_KEY")
+    }
+    return requests.post(url, headers=headers)
+
 def delete_file(file_id):
     url = f"https://prod-1-data.ke.pinecone.io/assistant/files/{PINECONE_ASSISTANCE_NAME}/{file_id}"
     headers = {
