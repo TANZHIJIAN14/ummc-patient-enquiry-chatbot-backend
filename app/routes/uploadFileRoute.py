@@ -36,6 +36,23 @@ async def get_file():
             ).model_dump()
         )
 
+@upload_file_router.get("/file/gradio_file_path")
+async def get_file_by_gradio_file_path(gradio_file_path: str):
+    try:
+        query = {"gradio_file_path": gradio_file_path}
+        file = uploaded_file_collection.find_one(query)
+        return serialize_mongo_document(file)
+    except Exception as e:
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="chat/file/{gradio_file_path}",
+                title="Internal server error",
+                details=f"An error occurred: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
+
 @upload_file_router.post("/file/pdf")
 async def upload_file(gradio_file_path: str, file: UploadFile = File(...)):
     if file.content_type != "application/pdf":
