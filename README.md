@@ -15,7 +15,7 @@ poetry init
 
 ### Install dependency
 ```bash
-poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant flask
+poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant flask transformers
 ```
 
 ## Docker Compose

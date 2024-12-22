@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Enhance upload file handling">
+    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Add delete file with gradio file path endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/model/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/routes/uploadFileRoute.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/uploadFileRoute.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/feedbackRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/feedbackRoutes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,6 +48,9 @@
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -204,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734543265543</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="Add delete file with gradio file path endpoint">
+      <option name="closed" value="true" />
+      <created>1734620045432</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1734620045432</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -224,6 +234,7 @@
     <MESSAGE value="Minor changes" />
     <MESSAGE value="Implement subscribe file api" />
     <MESSAGE value="Enhance upload file handling" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance upload file handling" />
+    <MESSAGE value="Add delete file with gradio file path endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add delete file with gradio file path endpoint" />
   </component>
 </project>

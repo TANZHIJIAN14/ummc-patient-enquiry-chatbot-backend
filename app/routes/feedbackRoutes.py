@@ -8,8 +8,25 @@ from starlette.responses import JSONResponse
 from app.database import feedback_collection, users_collection
 from app.model import ProblemDetail
 from app.model.feedbackModels import CreateFeedbackReq, CreateFeedbackResp
+from util import serialize_mongo_document
 
 feedback_router = APIRouter()
+@feedback_router.get("/")
+async def get_feedback():
+    try:
+        feedbacks = feedback_collection.find()
+        return [serialize_mongo_document(feedback) for feedback in feedbacks]
+    except Exception as e:
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="GET /feedback",
+                title="Internal server error",
+                details=f"An error occurred: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
+
 @feedback_router.post("/")
 async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
     if not user_id:
