@@ -41,7 +41,7 @@ class DeleteFileProcessor:
 
                 # Decode message
                 message_value = msg.value().decode("utf-8")
-                print(f"Received message: {message_value}")
+                print(f"Received message in {DELETED_FILE_TOPIC_NAME}: {message_value}")
 
                 # Assume the message contains the file ID
                 pinecone_file_id = message_value.strip()  # File ID

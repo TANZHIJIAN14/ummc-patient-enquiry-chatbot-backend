@@ -6,6 +6,8 @@ from fastapi import APIRouter, Header, HTTPException
 from starlette.responses import JSONResponse
 
 from app.database import feedback_collection, users_collection
+from app.eventhandler.feedbackAnalysisEventHandler import FEEDBACK_ANALYSIS_TOPIC_NAME
+from app.eventhandler.kafkaConfig import produce_message
 from app.model import ProblemDetail
 from app.model.feedbackModels import CreateFeedbackReq, CreateFeedbackResp
 from util import serialize_mongo_document
@@ -69,6 +71,7 @@ async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
         document = {
             "user_id": user_id,
             "message": request.message,
+            'label': "Analysing",
             "created_at": datetime.now()
         }
 
@@ -84,6 +87,9 @@ async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
                     status=HTTPStatus.INTERNAL_SERVER_ERROR.value
                 ).model_dump()
             )
+
+        # Send event to Feedback topic to sentiment analysis
+        produce_message(FEEDBACK_ANALYSIS_TOPIC_NAME, "id", result.inserted_id)
 
         return CreateFeedbackResp(
             user_id=document["user_id"],

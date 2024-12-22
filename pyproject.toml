@@ -16,6 +16,7 @@ pinecone = "^5.4.1"
 pinecone-plugin-assistant = "^0.4.1"
 flask = "^3.1.0"
 transformers = "^4.47.1"
+torch = "^2.5.1"
 
 
 [build-system]

@@ -15,7 +15,7 @@ poetry init
 
 ### Install dependency
 ```bash
-poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant flask transformers
+poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant flask transformers torch
 ```
 
 ## Docker Compose
@@ -28,7 +28,7 @@ poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone 
     docker compose down --remove-orphans
     ```
 3. To reset data and rebuild all docker containers.
-    ```shell
+    ```bash
     docker compose down --volumes
     docker compose up -d --build
     ```

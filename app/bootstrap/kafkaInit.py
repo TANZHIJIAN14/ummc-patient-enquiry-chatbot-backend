@@ -9,6 +9,6 @@ def run_startup_script():
             capture_output=True,
             text=True
         )
-        print("Startup script executed successfully:", result.stdout)
+        print("Startup script executed successfully:\n", result.stdout)
     except subprocess.CalledProcessError as e:
         print("Startup script failed:", e.stderr)
