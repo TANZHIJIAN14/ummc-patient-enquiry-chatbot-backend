@@ -16,7 +16,7 @@ feedback_router = APIRouter()
 @feedback_router.get("/")
 async def get_feedback():
     try:
-        feedbacks = feedback_collection.find()
+        feedbacks = feedback_collection.find().sort("created_at", -1)
         return [serialize_mongo_document(feedback) for feedback in feedbacks]
     except Exception as e:
         return JSONResponse(
