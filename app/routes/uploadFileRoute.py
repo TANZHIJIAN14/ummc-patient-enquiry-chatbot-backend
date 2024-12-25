@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 from http import HTTPStatus
+from typing import List
 
 from bson import ObjectId
 from fastapi import APIRouter, UploadFile, File, HTTPException
@@ -23,7 +24,7 @@ upload_file_router = APIRouter()
 @upload_file_router.get("/file")
 async def get_file():
     try:
-        all_uploaded_files = uploaded_file_collection.find()
+        all_uploaded_files = uploaded_file_collection.find().sort("uploaded_at", -1)
         return [serialize_mongo_document(doc) for doc in all_uploaded_files]
     except Exception as e:
         return JSONResponse(
@@ -54,57 +55,74 @@ async def get_file_by_gradio_file_path(gradio_file_path: str):
         )
 
 @upload_file_router.post("/file/pdf")
-async def upload_file(gradio_file_path: str, file: UploadFile = File(...)):
-    if file.content_type != "application/pdf":
-        return JSONResponse(
-            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
-            content=ProblemDetail(
-                type="chat/file/pdf",
-                title="Invalid file format",
-                details="Only PDF files are allowed.",
-                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
-            ).model_dump()
-        )
+async def upload_file(files: List[UploadFile] = File(...)):
+    responses = []
 
-    try:
-        # Read file content
-        file_content = await file.read()
+    for file in files:
+        if file.content_type != "application/pdf":
+            return JSONResponse(
+                status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+                content=ProblemDetail(
+                    type="chat/file/pdf",
+                    title="Invalid file format",
+                    details="Only PDF files are allowed.",
+                    status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+                ).model_dump()
+            )
 
-        # Create a document for the file
-        file_document = {
-            "gradio_file_path": gradio_file_path,
-            "filename": os.path.basename(file.filename),
-            "content_type": file.content_type,
-            "size": len(file_content),
-            "status": "Processing",
-            "uploaded_at": datetime.now(),
-            "file_data": Binary(file_content)
-        }
+        try:
+            # Read file content
+            file_content = await file.read()
 
-        # Insert the document into MongoDB
-        result = uploaded_file_collection.insert_one(file_document)
+            # Create a document for the file
+            file_document = {
+                "gradio_file_path": file.filename,
+                "filename": os.path.basename(file.filename),
+                "content_type": file.content_type,
+                "size": len(file_content),
+                "status": "Processing",
+                "uploaded_at": datetime.now(),
+                "file_data": Binary(file_content)
+            }
 
-        if result.inserted_id is None:
-            print("Insertion of file failed or the document was not inserted.")
+            # Insert the document into MongoDB
+            result = uploaded_file_collection.insert_one(file_document)
 
-        produce_message(UPLOADED_FILE_TOPIC_NAME, "file-id", result.inserted_id)
+            if result.inserted_id is None:
+                return JSONResponse(
+                    status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+                    content=ProblemDetail(
+                        type="chat/file/pdf",
+                        title="Unexpected error",
+                        details="Object id from mongo db is not found",
+                        status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+                    ).model_dump()
+                )
 
-        return {
-            "message": "File uploaded successfully",
-            "file_id": str(result.inserted_id)
-        }
+            produce_message(UPLOADED_FILE_TOPIC_NAME, "file-id", result.inserted_id)
 
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return JSONResponse(
-            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
-            content=ProblemDetail(
-                type="chat/file/pdf",
-                title="Internal server error",
-                details=f"An error occurred: {e}",
-                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
-            ).model_dump()
-        )
+            responses.append({
+                "filename": file.filename,
+                "status": "processing",
+                "file_id": str(result.inserted_id)
+            })
+
+        except Exception as e:
+            print(f"An error occurred while processing {file.filename}: {e}")
+            return JSONResponse(
+                status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+                content=ProblemDetail(
+                    type="chat/file/pdf",
+                    title="Internal server error",
+                    details=f"An error occurred: {e}",
+                    status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+                ).model_dump()
+            )
+
+    return {
+        "message": "File upload process completed",
+        "details": responses
+    }
 
 @upload_file_router.delete("/file/pdf")
 async def delete_file(file_id: str):
