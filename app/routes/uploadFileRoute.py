@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from http import HTTPStatus
-from typing import List
+from typing import List, Dict
 
 from bson import ObjectId
 from fastapi import APIRouter, UploadFile, File, HTTPException
@@ -25,7 +25,8 @@ upload_file_router = APIRouter()
 async def get_file():
     try:
         all_uploaded_files = uploaded_file_collection.find().sort("uploaded_at", -1)
-        return [serialize_mongo_document(doc) for doc in all_uploaded_files]
+        formatted_doc = [serialize_mongo_document(doc) for doc in all_uploaded_files]
+        return [document_schema(doc) for doc in formatted_doc]
     except Exception as e:
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
@@ -36,6 +37,19 @@ async def get_file():
                 status=HTTPStatus.INTERNAL_SERVER_ERROR.value
             ).model_dump()
         )
+
+def document_schema(doc: dict) -> Dict:
+    return {
+        "id": str(doc.get("_id", "")),  # Convert ObjectId to string
+        "gradio_file_path": str(doc.get("gradio_file_path", "")),
+        "filename": doc.get("filename", ""),
+        "size": doc.get("size", 0),  # Default to 0 if not available
+        "status": doc.get("status", ""),
+        "uploaded_at": doc.get("uploaded_at", None),  # Default to None if not available
+        "metadata": doc.get("metadata", {}),
+        "uploaded_file_id": doc.get("uploaded_file_id", "")
+        # Add any additional fields with defaults as needed
+    }
 
 @upload_file_router.get("/file/gradio_file_path")
 async def get_file_by_gradio_file_path(gradio_file_path: str):
