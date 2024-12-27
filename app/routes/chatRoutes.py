@@ -3,6 +3,8 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Header
 from pinecone_plugins.assistant.data.core.client.exceptions import NotFoundException
 from app.database import chat_room_collection
+from app.eventhandler.evaluationEventHandler import EVALUATION_TOPIC_NAME
+from app.eventhandler.kafkaConfig import produce_message
 from app.model.chatModels import MessageResp, MessageReq, ChatRoom, transform_mongo_document
 from app.model.pineconeModel import Reference
 from app.pinecone import assistant_chat
@@ -95,7 +97,7 @@ async def delete_chat_room(chat_room_id, user_id = Header()):
 @chat_router.post("/", response_model=MessageResp)
 async def chat(request: MessageReq):
     try:
-        chat_history = get_history_chat(request.chat_room_id, request.user_id)
+        chat_room_object_id, chat_history = get_history_chat(request.chat_room_id, request.user_id)
 
         # Combine chat history with the current prompt
         full_prompt = f"{chat_history}user: {request.prompt}"
@@ -129,7 +131,10 @@ async def chat(request: MessageReq):
             "assistant",
             meta_data)
 
-        # TODO: Generate chat room title during first conversation
+        #TODO: Generate chat room title during first conversation
+
+        print(f"Produce message to {EVALUATION_TOPIC_NAME}: {chat_room_object_id}")
+        produce_message(EVALUATION_TOPIC_NAME, 'id', chat_room_object_id)
 
         return MessageResp(
             sender_type="assistant",
@@ -151,7 +156,7 @@ def get_history_chat(chat_room_id: str, user_id: str):
             # Format the history as "<sender_type>: <message>"
             chat_history += f'{message["sender_type"]}: {message["message"]}\n'
 
-    return chat_history
+    return chat_room.get('_id'), chat_history
 
 def persist_prompt(chatroom_id: str, user_id: str, message: str, sender_type: str, meta_data: Reference = None):
     """
@@ -166,7 +171,7 @@ def persist_prompt(chatroom_id: str, user_id: str, message: str, sender_type: st
     }
 
     # Update the chat room's messages array
-    chat_room_collection.update_one(
+    return chat_room_collection.update_one(
         {
             "chat_room_id": chatroom_id,
             "user_id": user_id,
