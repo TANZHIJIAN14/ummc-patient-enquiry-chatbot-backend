@@ -3,7 +3,7 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, Header
 from pinecone_plugins.assistant.data.core.client.exceptions import NotFoundException
 from app.database import chat_room_collection
-from app.eventhandler.evaluationEventHandler import EVALUATION_TOPIC_NAME
+from app.eventhandler.evaluation.evaluationEventHandler import EVALUATION_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
 from app.model.chatModels import MessageResp, MessageReq, ChatRoom, transform_mongo_document
 from app.model.pineconeModel import Reference
@@ -124,7 +124,7 @@ async def chat(request: MessageReq):
             request.prompt,
             "user")
 
-        persist_prompt(
+        assistant_doc = persist_prompt(
             request.chat_room_id,
             request.user_id,
             chat_response_message,
@@ -132,6 +132,9 @@ async def chat(request: MessageReq):
             meta_data)
 
         #TODO: Generate chat room title during first conversation
+
+        if chat_room_object_id is None or chat_room_object_id == '':
+            chat_room_object_id, chat_history = get_history_chat(request.chat_room_id, request.user_id)
 
         print(f"Produce message to {EVALUATION_TOPIC_NAME}: {chat_room_object_id}")
         produce_message(EVALUATION_TOPIC_NAME, 'id', chat_room_object_id)
@@ -142,6 +145,7 @@ async def chat(request: MessageReq):
             reference=meta_data,
             created_at=datetime.now())
     except Exception as e:
+        print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 def get_history_chat(chat_room_id: str, user_id: str):
@@ -156,7 +160,9 @@ def get_history_chat(chat_room_id: str, user_id: str):
             # Format the history as "<sender_type>: <message>"
             chat_history += f'{message["sender_type"]}: {message["message"]}\n'
 
-    return chat_room.get('_id'), chat_history
+        return chat_room.get('_id'), chat_history
+
+    return "", chat_history
 
 def persist_prompt(chatroom_id: str, user_id: str, message: str, sender_type: str, meta_data: Reference = None):
     """

@@ -15,7 +15,13 @@ poetry init
 
 ### Install dependency
 ```bash
-poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant flask transformers torch pdfkit
+poetry add "fastapi[standard]" fastcrud pymongo \
+confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant \
+flask transformers torch pdfkit lm-format-enforcer
+```
+### Extra dependency
+```bash
+pip install bitsandbytes
 ```
 
 ## Docker Compose
@@ -36,4 +42,11 @@ poetry add "fastapi[standard]" fastcrud pymongo confluent-kafka PyPDF2 pinecone 
 ### Run the project
 ```bash
 poetry run fastapi run
+```
+
+### Run local LLM
+```bash
+deepeval set-local-model --model-name=llama3.2:1b \
+    --base-url="http://localhost:11434/v1/" \
+    --api-key="ollama"
 ```

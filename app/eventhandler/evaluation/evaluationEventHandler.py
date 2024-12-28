@@ -7,6 +7,7 @@ from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletene
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
 
 from app.database import evaluation_collection, chat_room_collection
+from app.eventhandler.evaluation.customMistral7B import CustomMistral7B
 
 KAFKA_BROKER = "localhost:9092"  # Kafka broker address
 EVALUATION_TOPIC_NAME = "Evaluation"  # Kafka topic
@@ -18,9 +19,12 @@ def evaluate_conversation(chat_room_object_id, user_id, conversation):
     convo_test_case = ConversationalTestCase(
         turns=llm_test_cases
     )
-    relevancy_metric = ConversationRelevancyMetric(threshold=0.5)
-    completeness_metric = ConversationCompletenessMetric(threshold=0.5)
-    knowledge_retention_metric = KnowledgeRetentionMetric(threshold=0.5)
+
+    custom_llm = CustomMistral7B()
+
+    relevancy_metric = ConversationRelevancyMetric(threshold=0.5, model=custom_llm)
+    completeness_metric = ConversationCompletenessMetric(threshold=0.5, model=custom_llm)
+    knowledge_retention_metric = KnowledgeRetentionMetric(threshold=0.5, model=custom_llm)
 
     relevancy_metric.measure(convo_test_case)
     print(relevancy_metric.score)
@@ -59,7 +63,7 @@ def persist_metric(
         },
         {
             "$setOnInsert": {"created_at": datetime.now()},  # Set createdAt only on insert
-            "$push": {"metrics": metrics_entry}  # Append to the messages array
+            "$set": {"metrics": metrics_entry}
         },
         upsert=True
     )
