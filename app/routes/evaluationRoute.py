@@ -5,6 +5,7 @@ from starlette.responses import JSONResponse
 
 from app.database import evaluation_collection
 from app.model import ProblemDetail
+from util import serialize_mongo_document
 
 evaluation_router = APIRouter()
 
@@ -23,7 +24,7 @@ async def get_evaluation_metrics(user_id: str):
 
     try:
         evaluation_metrics = evaluation_collection.find({"user_id": user_id})
-        return evaluation_metrics
+        return [serialize_mongo_document(doc) for doc in evaluation_metrics]
     except Exception as e:
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,

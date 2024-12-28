@@ -6,7 +6,7 @@ from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletene
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
 
 from app.database import evaluation_collection, chat_room_collection
-from app.eventhandler.evaluation.customMistral7B import CustomOllamaLLM
+from app.eventhandler.evaluation.customOllamaLLM import CustomOllamaLLM
 
 KAFKA_BROKER = "localhost:9092"  # Kafka broker address
 EVALUATION_TOPIC_NAME = "Evaluation"  # Kafka topic

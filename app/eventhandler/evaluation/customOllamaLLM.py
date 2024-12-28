@@ -3,31 +3,35 @@ import re
 
 from langchain_community.llms.ollama import Ollama
 from pydantic import BaseModel
-from lmformatenforcer import JsonSchemaParser
 from deepeval.models import DeepEvalBaseLLM
 
 
 def extract_json_from_response(response_string: str):
     try:
         # Regular expression pattern to match JSON objects that start with "intentions" and end with the closing curly brace
-        json_pattern = r'```json\n({.*?})\n```'
+        json_patterns = [r'```json\n({.*?})\n```', r'```\n({.*?})\n```']
 
-        # Find all matches of the pattern in the response string
-        json_matches = re.findall(json_pattern, response_string, re.DOTALL)
+        for json_pattern in json_patterns:
+            # Find all matches of the current json_pattern in the response string
+            json_matches = re.findall(json_pattern, response_string, re.DOTALL)
 
-        if json_matches:
-            # Return the latest (last) JSON match
-            latest_json = json_matches[-1]
+            if json_matches:
+                # Return the latest (last) JSON match from this pattern
+                latest_json = json_matches[-1]
 
-            # Parse the latest JSON match
-            latest_json_data = json.loads(latest_json)
+                # Remove any trailing commas to make it valid JSON
+                if latest_json.endswith(","):
+                    latest_json = latest_json.rstrip(",")
 
-            return latest_json_data
+                # Parse the latest JSON match
+                latest_json_data = json.loads(latest_json)
+
+                return latest_json_data
         else:
-            return {"verdict": "no", "reason": "", "data": ""}
+            return {"verdict": "no", "reason": "", "intentions": [], "data": {}}
     except (ValueError, IndexError) as e:
         print(f"Error extracting JSON: {e}")
-        return {"verdict": "no", "reason": "", "data": ""}
+        return {"verdict": "no", "reason": "", "intentions": [], "data": {}}
 
 class CustomOllamaLLM(DeepEvalBaseLLM):
     def __init__(self, model_name="llama3.1"):
@@ -60,10 +64,10 @@ class CustomOllamaLLM(DeepEvalBaseLLM):
             return schema(**json_result)
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
-            return {"verdict": "no", "reason": "", "data": ""}
+            return {"verdict": "no", "reason": "", "intentions": [], "data": {}}
         except Exception as e:
             print(f"Error validating output: {e}")
-            return {"verdict": "no", "reason": "", "data": ""}
+            return {"verdict": "no", "reason": "", "intentions": [], "data": {}}
 
     async def a_generate(self, prompt: str, schema: BaseModel) -> BaseModel:
         return self.generate(prompt, schema)
