@@ -46,7 +46,7 @@ flask transformers torch pdfkit lm-format-enforcer
 poetry run fastapi run
 ```
 
-### Run local LLM
+### [Optional] Run local LLM
 ```bash
 deepeval set-local-model --model-name=llama3.1 \
     --base-url="http://localhost:11434/v1/" \
