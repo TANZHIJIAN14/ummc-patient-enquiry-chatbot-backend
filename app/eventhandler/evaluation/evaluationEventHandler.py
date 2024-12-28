@@ -1,26 +1,25 @@
-import logging
 from datetime import datetime
 
 from bson import ObjectId
-from confluent_kafka import Consumer, KafkaError, KafkaException
+from confluent_kafka.cimpl import Consumer, KafkaError, KafkaException
 from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, KnowledgeRetentionMetric
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
 
 from app.database import evaluation_collection, chat_room_collection
-from app.eventhandler.evaluation.customMistral7B import CustomMistral7B
+from app.eventhandler.evaluation.customMistral7B import CustomOllamaLLM
 
 KAFKA_BROKER = "localhost:9092"  # Kafka broker address
 EVALUATION_TOPIC_NAME = "Evaluation"  # Kafka topic
 GROUP_ID = "evaluation-processing-group"  # Consumer group ID
 
-def evaluate_conversation(chat_room_object_id, user_id, conversation):
+def evaluate_conversation(chat_room_object_id, user_id, chat_room_id, conversation):
     llm_test_cases = get_llm_test_cases(conversation)
 
     convo_test_case = ConversationalTestCase(
         turns=llm_test_cases
     )
 
-    custom_llm = CustomMistral7B()
+    custom_llm = CustomOllamaLLM()
 
     relevancy_metric = ConversationRelevancyMetric(threshold=0.5, model=custom_llm)
     completeness_metric = ConversationCompletenessMetric(threshold=0.5, model=custom_llm)
@@ -38,11 +37,12 @@ def evaluate_conversation(chat_room_object_id, user_id, conversation):
     print(knowledge_retention_metric.score)
     print(knowledge_retention_metric.reason)
 
-    persist_metric(chat_room_object_id, user_id, relevancy_metric, completeness_metric, knowledge_retention_metric)
+    persist_metric(chat_room_object_id, user_id, chat_room_id, relevancy_metric, completeness_metric, knowledge_retention_metric)
 
 def persist_metric(
         chat_room_object_id,
         user_id,
+chat_room_id,
         relevancy_metric: ConversationRelevancyMetric,
         completeness_metric: ConversationCompletenessMetric,
         knowledge_retention_metric: KnowledgeRetentionMetric):
@@ -59,7 +59,8 @@ def persist_metric(
     evaluation_collection.update_one(
         {
             "chat_room_object_id": chat_room_object_id,
-            "user_id": user_id
+            "user_id": user_id,
+            "chat_room_id": chat_room_id
         },
         {
             "$setOnInsert": {"created_at": datetime.now()},  # Set createdAt only on insert
@@ -120,7 +121,11 @@ class EvaluationProcessor:
                 chat_room_object_id = ObjectId(message_value)
                 chat_room = chat_room_collection.find_one({"_id": chat_room_object_id})
 
-                evaluate_conversation(chat_room_object_id, chat_room.get('user_id'), chat_room.get('messages'))
+                evaluate_conversation(
+                    chat_room_object_id,
+                    chat_room.get('user_id'),
+                    chat_room.get('chat_room_id'),
+                    chat_room.get('messages'))
 
         except KeyboardInterrupt:
             print("Kafka consumer interrupted.")

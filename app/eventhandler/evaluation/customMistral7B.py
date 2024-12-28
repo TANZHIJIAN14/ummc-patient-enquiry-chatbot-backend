@@ -1,76 +1,73 @@
 import json
+import re
 
-import transformers
+from langchain_community.llms.ollama import Ollama
 from pydantic import BaseModel
-import torch
 from lmformatenforcer import JsonSchemaParser
-from lmformatenforcer.integrations.transformers import (
-    build_transformers_prefix_allowed_tokens_fn,
-)
-from transformers import BitsAndBytesConfig
-from transformers import AutoModelForCausalLM, AutoTokenizer
-
 from deepeval.models import DeepEvalBaseLLM
 
-from app.eventhandler.evaluation import mistral_models_path
 
+def extract_json_from_response(response_string: str):
+    try:
+        # Regular expression pattern to match JSON objects that start with "intentions" and end with the closing curly brace
+        json_pattern = r'```json\n({.*?})\n```'
 
-class CustomMistral7B(DeepEvalBaseLLM):
-    def __init__(self):
-        quantization_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_compute_dtype=torch.float16,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_use_double_quant=True,
-        )
+        # Find all matches of the pattern in the response string
+        json_matches = re.findall(json_pattern, response_string, re.DOTALL)
 
-        model_4bit = AutoModelForCausalLM.from_pretrained(
-            mistral_models_path,
-            device_map="auto",
-            quantization_config=quantization_config,
-        )
-        tokenizer = AutoTokenizer.from_pretrained(
-            mistral_models_path
-        )
+        if json_matches:
+            # Return the latest (last) JSON match
+            latest_json = json_matches[-1]
 
-        self.model = model_4bit
-        self.tokenizer = tokenizer
+            # Parse the latest JSON match
+            latest_json_data = json.loads(latest_json)
+
+            return latest_json_data
+        else:
+            return {"verdict": "no", "reason": "", "data": ""}
+    except (ValueError, IndexError) as e:
+        print(f"Error extracting JSON: {e}")
+        return {"verdict": "no", "reason": "", "data": ""}
+
+class CustomOllamaLLM(DeepEvalBaseLLM):
+    def __init__(self, model_name="llama3.1"):
+        self.model_name = model_name
+        self.client = Ollama(model=model_name)
 
     def load_model(self):
-        return self.model
+        return self.client
 
     def generate(self, prompt: str, schema: BaseModel) -> BaseModel:
-        model = self.load_model()
-        pipeline = transformers.pipeline(
-            "text-generation",
-            model=model,
-            tokenizer=self.tokenizer,
-            use_cache=True,
-            device_map="auto",
-            max_length=2500,
-            do_sample=True,
-            top_k=5,
-            num_return_sequences=1,
-            eos_token_id=self.tokenizer.eos_token_id,
-            pad_token_id=self.tokenizer.eos_token_id,
+        client = self.load_model()
+
+        # Generate output
+        response = client.generate(
+            prompts=[prompt],
+            stop_sequences=["\n"],  # Define stop tokens for clean outputs
+            temperature=0.7,
+            max_tokens=2000,
+            top_p=0.9,
+            top_k=40,
         )
 
-        # Create parser required for JSON confinement using lmformatenforcer
-        parser = JsonSchemaParser(schema.model_json_schema())
-        prefix_function = build_transformers_prefix_allowed_tokens_fn(
-            pipeline.tokenizer, parser
-        )
+        # Extract the text output from the response
+        generated_text = response.generations[0][0].text
 
-        # Output and load valid JSON
-        output_dict = pipeline(prompt, prefix_allowed_tokens_fn=prefix_function)
-        output = output_dict[0]["generated_text"][len(prompt) :]
-        json_result = json.loads(output)
+        print(f"Result: {generated_text}")
+        try:
+            json_result = extract_json_from_response(generated_text)  # Assuming generated_text is valid JSON
 
-        # Return valid JSON object according to the schema DeepEval supplied
-        return schema(**json_result)
+            return schema(**json_result)
+        except json.JSONDecodeError as e:
+            print(f"Error decoding JSON: {e}")
+            return {"verdict": "no", "reason": "", "data": ""}
+        except Exception as e:
+            print(f"Error validating output: {e}")
+            return {"verdict": "no", "reason": "", "data": ""}
 
     async def a_generate(self, prompt: str, schema: BaseModel) -> BaseModel:
         return self.generate(prompt, schema)
 
     def get_model_name(self):
-        return "Mistral-7B v0.3"
+        return self.model_name
+
