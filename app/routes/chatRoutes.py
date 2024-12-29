@@ -1,20 +1,32 @@
 import json
 from datetime import datetime
+from http import HTTPStatus
+
 from fastapi import APIRouter, HTTPException, Header
 from pinecone_plugins.assistant.data.core.client.exceptions import NotFoundException
 from app.database import chat_room_collection
 from app.eventhandler.evaluation.evaluationEventHandler import EVALUATION_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
+from app.model import ProblemDetail
 from app.model.chatModels import MessageResp, MessageReq, ChatRoom, transform_mongo_document
 from app.model.pineconeModel import Reference
 from app.pinecone import assistant_chat
+from starlette.responses import JSONResponse
 
 chat_router = APIRouter()
 @chat_router.get("/chat-room", response_model=list[ChatRoom])
 async def get_chat_room(user_id = Header()):
     # Validate user_id header
     if not user_id:
-        raise HTTPException(status_code=400, detail="User ID header is required.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="chat/unprocessable-entity",
+                title="Unprocessable entity",
+                details="User ID header is required.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     try:
         query = {"user_id": user_id}
@@ -28,7 +40,15 @@ async def get_chat_room(user_id = Header()):
 
     except Exception as e:
         # Catch any unexpected errors and return a 500 status
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="GET /feedback",
+                title="Internal server error",
+                details=f"An error occurred: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
 
 @chat_router.get("/chat-room/{chat_room_id}", response_model=ChatRoom)
 async def get_chat_room(chat_room_id, user_id = Header()):

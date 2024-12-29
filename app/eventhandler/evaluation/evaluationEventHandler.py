@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bson import ObjectId
 from confluent_kafka.cimpl import Consumer, KafkaError, KafkaException
-from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, KnowledgeRetentionMetric
+from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, KnowledgeRetentionMetric, RoleAdherenceMetric
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
 
 from app.database import evaluation_collection, chat_room_collection
@@ -16,6 +16,7 @@ def evaluate_conversation(chat_room_object_id, user_id, chat_room_id, conversati
     llm_test_cases = get_llm_test_cases(conversation)
 
     convo_test_case = ConversationalTestCase(
+        chatbot_role="You are UMMC patient enquiry chatbot. You are capable to answer patient enquiry with your knowledge base",
         turns=llm_test_cases
     )
 
@@ -23,21 +24,21 @@ def evaluate_conversation(chat_room_object_id, user_id, chat_room_id, conversati
 
     relevancy_metric = ConversationRelevancyMetric(threshold=0.5, model=custom_llm)
     completeness_metric = ConversationCompletenessMetric(threshold=0.5, model=custom_llm)
-    knowledge_retention_metric = KnowledgeRetentionMetric(threshold=0.5, model=custom_llm)
+    role_adherence_metric = RoleAdherenceMetric(threshold=0.5, model=custom_llm)
 
     relevancy_metric.measure(convo_test_case)
-    print(relevancy_metric.score)
-    print(relevancy_metric.reason)
+    print(f"Relevancy metrics score: {relevancy_metric.score}")
+    print(f"Relevancy metrics score: {relevancy_metric.reason}")
 
     completeness_metric.measure(convo_test_case)
-    print(completeness_metric.score)
-    print(completeness_metric.reason)
+    print(f"Completeness metrics score: {completeness_metric.score}")
+    print(f"Completeness metrics reason: {completeness_metric.reason}")
 
-    knowledge_retention_metric.measure(convo_test_case)
-    print(knowledge_retention_metric.score)
-    print(knowledge_retention_metric.reason)
+    role_adherence_metric.measure(convo_test_case)
+    print(f"Role adherence metrics score: {role_adherence_metric.score}")
+    print(f"Role adherence metrics score: {role_adherence_metric.reason}")
 
-    persist_metric(chat_room_object_id, user_id, chat_room_id, relevancy_metric, completeness_metric, knowledge_retention_metric)
+    persist_metric(chat_room_object_id, user_id, chat_room_id, relevancy_metric, completeness_metric, role_adherence_metric)
 
 def persist_metric(
         chat_room_object_id,
@@ -45,14 +46,14 @@ def persist_metric(
 chat_room_id,
         relevancy_metric: ConversationRelevancyMetric,
         completeness_metric: ConversationCompletenessMetric,
-        knowledge_retention_metric: KnowledgeRetentionMetric):
+        role_adherence_metric: RoleAdherenceMetric):
     metrics_entry = {
         "relevancy_metric_score": relevancy_metric.score,
         "relevancy_metric_reason": relevancy_metric.reason,
         "completeness_metric_score": completeness_metric.score,
         "completeness_metric_reason": completeness_metric.reason,
-        "knowledge_retention_metric_score": knowledge_retention_metric.score,
-        "knowledge_retention_metric_reason": knowledge_retention_metric.reason,
+        "role_adherence_metric_score": role_adherence_metric.score,
+        "role_adherence_metric_reason": role_adherence_metric.reason,
         "updated_at": datetime.now()
     }
 

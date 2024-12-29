@@ -23,7 +23,8 @@ poetry init
 ```bash
 poetry add "fastapi[standard]" fastcrud pymongo \
 confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant \
-flask transformers torch pdfkit instructor instructorembedding
+flask transformers torch pdfkit instructor InstructorEmbedding ollama \
+sentence_transformers
 ```
 
 ## Docker Compose

@@ -5,16 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Implement chatbot deepeval testing">
-      <change afterPath="$PROJECT_DIR$/custom-llm/mistralai/Mistral-7B-Instruct-v0.3/config.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/custom-llm/mistralai/Mistral-7B-Instruct-v0.3/params.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/custom-llm/mistralai/Mistral-7B-Instruct-v0.3/tokenizer.model.v3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/eventhandler/evaluation/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventhandler/evaluation/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/eventhandler/evaluation/customMistral7B.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventhandler/evaluation/customMistral7B.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/eventhandler/evaluation/evaluationEventHandler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventhandler/evaluation/evaluationEventHandler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/eventhandler/evaluation/customOllamaLLM.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventhandler/evaluation/customOllamaLLM.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/routes/chatRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/chatRoutes.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,15 +51,15 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/jaytan/Documents/UM/YR4_SEM1/FYP_2/ummc-patient-enquiry-chatbot-backend/custom-llm/mistralai/Mistral-7B-Instruct-v0.3",
+    "last_opened_file_path": "/Users/jaytan/Documents/UM/YR4_SEM1/FYP_2/ummc-patient-enquiry-chatbot-backend/app",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app" />
       <recent name="$PROJECT_DIR$/custom-llm/mistralai/Mistral-7B-Instruct-v0.3" />
       <recent name="$PROJECT_DIR$/custom-llm" />
-      <recent name="$PROJECT_DIR$/app" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
