@@ -21,7 +21,7 @@ async def get_chat_room(user_id = Header()):
         return JSONResponse(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
             content=ProblemDetail(
-                type="chat/unprocessable-entity",
+                type="GET /chat-room",
                 title="Unprocessable entity",
                 details="User ID header is required.",
                 status=HTTPStatus.UNPROCESSABLE_ENTITY.value
@@ -43,7 +43,7 @@ async def get_chat_room(user_id = Header()):
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             content=ProblemDetail(
-                type="GET /feedback",
+                type="GET /chat-room",
                 title="Internal server error",
                 details=f"An error occurred: {e}",
                 status=HTTPStatus.INTERNAL_SERVER_ERROR.value
@@ -54,10 +54,26 @@ async def get_chat_room(user_id = Header()):
 async def get_chat_room(chat_room_id, user_id = Header()):
     # Validate user_id header
     if not user_id:
-        raise HTTPException(status_code=400, detail="User ID header is required.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="GET /chat-room/{chat-room-id}",
+                title="Unprocessable entity",
+                details=f"User ID header is required.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     if not chat_room_id:
-        raise HTTPException(status_code=400, detail="Chat room id is required.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="GET /chat-room/{chat-room-id}",
+                title="Unprocessable entity",
+                details="Chat room id is required.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     query = {
         "$and": [
@@ -68,7 +84,15 @@ async def get_chat_room(chat_room_id, user_id = Header()):
     chat_room = chat_room_collection.find_one(query)
 
     if chat_room is None:
-        raise NotFoundException(404, f"Chat room with ID: {chat_room_id} is not found")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND.value,
+            content=ProblemDetail(
+                type="GET /chat-room/{chat-room-id}",
+                title="Chat not found",
+                details=f"Chat room with ID: {chat_room_id} is not found",
+                status=HTTPStatus.NOT_FOUND.value
+            ).model_dump()
+        )
 
     # Extract and validate the fields
     object_id = str(chat_room.get("_id"))
@@ -89,10 +113,26 @@ async def get_chat_room(chat_room_id, user_id = Header()):
 @chat_router.delete("/{chat_room_id}")
 async def delete_chat_room(chat_room_id, user_id = Header()):
     if not user_id:
-        raise HTTPException(status_code=400, detail="User ID header is required.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Unprocessable entity",
+                details=f"User ID header is required.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     if not chat_room_id:
-        raise HTTPException(status_code=400, detail="Chat room id is required.")
+        return JSONResponse(
+            status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Unprocessable entity",
+                details="Chat room id is required.",
+                status=HTTPStatus.UNPROCESSABLE_ENTITY.value
+            ).model_dump()
+        )
 
     query = {
         "$and": [
@@ -103,14 +143,28 @@ async def delete_chat_room(chat_room_id, user_id = Header()):
     chat_room = chat_room_collection.find_one(query)
 
     if chat_room is None:
-        raise NotFoundException(404, f"Chat room with ID: {chat_room_id} is not found")
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Chat not found",
+                details=f"Chat room with ID: {chat_room_id} is not found",
+                status=HTTPStatus.NOT_FOUND.value
+            ).model_dump()
+        )
 
     result = chat_room_collection.delete_one(query)
 
     if result.deleted_count == 0:
-        raise HTTPException(
-            status_code=500,
-            detail=f"Failed to delete the chat room with ID: {chat_room_id} of user ID: {user_id}")
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Internal server error",
+                details=f"Failed to delete the chat room with ID: {chat_room_id} of user ID: {user_id}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
 
     return {"message": f"Chat room: {chat_room_id} of user ID: {user_id} has been successfully deleted."}
 
@@ -166,7 +220,15 @@ async def chat(request: MessageReq):
             created_at=datetime.now())
     except Exception as e:
         print(f"Error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="POST /chat",
+                title="Internal server error",
+                details=f"Failed to upload chat: {e}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
 
 def get_history_chat(chat_room_id: str, user_id: str):
     # Query chat history from MongoDB
