@@ -3,8 +3,7 @@ from datetime import datetime
 from http import HTTPStatus
 
 from fastapi import APIRouter, HTTPException, Header
-from pinecone_plugins.assistant.data.core.client.exceptions import NotFoundException
-from app.database import chat_room_collection
+from app.database import chat_room_collection, evaluation_collection
 from app.eventhandler.evaluation.evaluationEventHandler import EVALUATION_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
 from app.model import ProblemDetail
@@ -153,15 +152,28 @@ async def delete_chat_room(chat_room_id, user_id = Header()):
             ).model_dump()
         )
 
-    result = chat_room_collection.delete_one(query)
+    result_delete_chat_room = chat_room_collection.delete_one(query)
 
-    if result.deleted_count == 0:
+    result_delete_metrics = evaluation_collection.delete_one(query)
+
+    if result_delete_chat_room.deleted_count == 0:
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             content=ProblemDetail(
                 type="DELETE /chat",
                 title="Internal server error",
                 details=f"Failed to delete the chat room with ID: {chat_room_id} of user ID: {user_id}",
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )
+
+    if result_delete_metrics.deleted_count == 0:
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Internal server error",
+                details=f"Failed to delete evaluation metrics of chat room with ID: {chat_room_id} of user ID: {user_id}",
                 status=HTTPStatus.INTERNAL_SERVER_ERROR.value
             ).model_dump()
         )

@@ -11,7 +11,7 @@ pip install --upgrade pip
 
 ### If you don’t yet have poetry installed, start by running:
 ```bash
-pip install poetry deepeval
+pip install poetry deepeval starlette
 ```
 
 ### Init poetry
@@ -24,7 +24,7 @@ poetry init
 poetry add "fastapi[standard]" fastcrud pymongo \
 confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant \
 flask transformers torch pdfkit instructor InstructorEmbedding ollama \
-sentence_transformers
+sentence_transformers eval_type_backport
 ```
 
 ## Docker Compose
