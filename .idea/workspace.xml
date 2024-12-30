@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Implement chatbot deepeval testing">
+    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Enhance chat room delete endpoint">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/eventhandler/evaluation/customOllamaLLM.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/eventhandler/evaluation/customOllamaLLM.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes/chatRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/chatRoutes.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/chatRoutesTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/chatRoutesTest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +48,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error.executor": "Run",
+    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms.executor": "Run",
+    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id.executor": "Run",
+    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_without_user_id.executor": "Run",
     "Python.evaluation.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
@@ -75,7 +80,7 @@
       <command value="pip install poetry deepeval" />
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error">
     <configuration name="evaluation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="chatbot-service" />
       <option name="ENV_FILES" value="" />
@@ -98,8 +103,72 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_with_internal_server_error&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_with_no_chat_rooms&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_with_valid_user_id&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_without_user_id" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_without_user_id&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error" />
+        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms" />
+        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_without_user_id" />
+        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id" />
         <item itemvalue="Python.evaluation" />
       </list>
     </recent_temporary>
@@ -328,7 +397,15 @@
       <option name="project" value="LOCAL" />
       <updated>1735327119148</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Enhance chat room delete endpoint">
+      <option name="closed" value="true" />
+      <created>1735484653980</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1735484653980</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -356,6 +433,7 @@
     <MESSAGE value="Optimise api response time" />
     <MESSAGE value="Implement convert url to pdf endpoint" />
     <MESSAGE value="Implement chatbot deepeval testing" />
-    <option name="LAST_COMMIT_MESSAGE" value="Implement chatbot deepeval testing" />
+    <MESSAGE value="Enhance chat room delete endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance chat room delete endpoint" />
   </component>
 </project>

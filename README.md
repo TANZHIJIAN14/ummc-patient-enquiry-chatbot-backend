@@ -24,7 +24,7 @@ poetry init
 poetry add "fastapi[standard]" fastcrud pymongo \
 confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant \
 flask transformers torch pdfkit instructor InstructorEmbedding ollama \
-sentence_transformers eval_type_backport pytest
+sentence_transformers eval_type_backport pytest pytest-asyncio
 ```
 
 ## Docker Compose
@@ -52,4 +52,10 @@ poetry run fastapi run
 deepeval set-local-model --model-name=llama3.1 \
     --base-url="http://localhost:11434/v1/" \
     --api-key="ollama"
+```
+
+### Run test cases
+```bash
+export PYTHONPATH=$(pwd)
+pytest /path/<filename>.py
 ```

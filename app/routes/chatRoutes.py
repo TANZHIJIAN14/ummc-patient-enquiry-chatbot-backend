@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from http import HTTPStatus
 
-from fastapi import APIRouter, HTTPException, Header
+from fastapi import APIRouter, Header
 from app.database import chat_room_collection, evaluation_collection
 from app.eventhandler.evaluation.evaluationEventHandler import EVALUATION_TOPIC_NAME
 from app.eventhandler.kafkaConfig import produce_message
@@ -14,7 +14,7 @@ from starlette.responses import JSONResponse
 
 chat_router = APIRouter()
 @chat_router.get("/chat-room", response_model=list[ChatRoom])
-async def get_chat_room(user_id = Header()):
+async def get_chat_rooms(user_id = Header()):
     # Validate user_id header
     if not user_id:
         return JSONResponse(
@@ -210,7 +210,7 @@ async def chat(request: MessageReq):
             request.prompt,
             "user")
 
-        assistant_doc = persist_prompt(
+        persist_prompt(
             request.chat_room_id,
             request.user_id,
             chat_response_message,
@@ -229,7 +229,7 @@ async def chat(request: MessageReq):
             sender_type="assistant",
             message=chat_response_message,
             reference=meta_data,
-            created_at=datetime.now())
+            created_at=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"))
     except Exception as e:
         print(f"Error: {e}")
         return JSONResponse(
