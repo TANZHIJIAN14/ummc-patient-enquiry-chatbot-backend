@@ -3,6 +3,7 @@ from datetime import datetime
 from http import HTTPStatus
 from typing import List, Dict
 
+import pymongo
 from bson import ObjectId
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from starlette.responses import JSONResponse
@@ -36,7 +37,7 @@ async def get_file():
                 "metadata": 1,
                 "uploaded_file_id": 1
             }
-        ).sort("uploaded_at", -1)
+        ).sort("uploaded_at", pymongo.DESCENDING)
         return [serialize_mongo_document(doc) for doc in all_uploaded_files]
     except Exception as e:
         return JSONResponse(
@@ -59,7 +60,7 @@ async def get_file_by_gradio_file_path(gradio_file_path: str):
         return JSONResponse(
             status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
             content=ProblemDetail(
-                type="chat/file/{gradio_file_path}",
+                type=f"chat/file/{gradio_file_path}",
                 title="Internal server error",
                 details=f"An error occurred: {e}",
                 status=HTTPStatus.INTERNAL_SERVER_ERROR.value
