@@ -1,6 +1,7 @@
 from datetime import datetime
 from http import HTTPStatus
 
+import pymongo
 from bson import ObjectId
 from fastapi import APIRouter, Header, HTTPException
 from starlette.responses import JSONResponse
@@ -16,7 +17,7 @@ feedback_router = APIRouter()
 @feedback_router.get("/")
 async def get_feedback():
     try:
-        feedbacks = feedback_collection.find().sort("created_at", -1)
+        feedbacks = feedback_collection.find().sort("created_at", pymongo.DESCENDING)
         return [serialize_mongo_document(feedback) for feedback in feedbacks]
     except Exception as e:
         return JSONResponse(
@@ -42,7 +43,7 @@ async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
             ).model_dump()
         )
 
-    if not request and not request.message:
+    if not request or not request.message:
         return JSONResponse(
             status_code=HTTPStatus.UNPROCESSABLE_ENTITY.value,
             content=ProblemDetail(
@@ -72,7 +73,7 @@ async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
             "user_id": user_id,
             "message": request.message,
             'label': "Analysing",
-            "created_at": datetime.now()
+            "created_at": datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         }
 
         result = feedback_collection.insert_one(document)
@@ -97,4 +98,12 @@ async def send_feedback(request: CreateFeedbackReq, user_id = Header()):
             created_at=document["created_at"]
         )
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        return JSONResponse(
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR.value,
+            content=ProblemDetail(
+                type="feedback/unexpected-error",
+                title="Unexpected error",
+                details=str(e),
+                status=HTTPStatus.INTERNAL_SERVER_ERROR.value
+            ).model_dump()
+        )

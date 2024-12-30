@@ -33,7 +33,7 @@ async def test_get_chat_room_with_valid_user_id():
             response = await client.get("/chat/chat-room", headers={"user-id": user_id})
 
         print(response.json())
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK.value
         assert response.json() == mock_chat_rooms
 
 @pytest.mark.asyncio
@@ -41,12 +41,12 @@ async def test_get_chat_room_without_user_id():
     async with AsyncClient(app=app, base_url="http://test") as client:
         response = await client.get("/chat/chat-room", headers={"user-id": ""})
 
-    assert response.status_code == 422
+    assert response.status_code == HTTPStatus.UNPROCESSABLE_ENTITY.value
     assert response.json() == {
         "type": "GET /chat-room",
         "title": "Unprocessable entity",
         "details": "User ID header is required.",
-        "status": 422,
+        "status": HTTPStatus.UNPROCESSABLE_ENTITY.value,
     }
 
 @pytest.mark.asyncio
@@ -59,7 +59,7 @@ async def test_get_chat_room_with_no_chat_rooms():
         async with AsyncClient(app=app, base_url="http://test") as client:
             response = await client.get("/chat/chat-room", headers={"user-id": user_id})
 
-        assert response.status_code == 200
+        assert response.status_code == HTTPStatus.OK.value
         assert response.json() == []
 
 @pytest.mark.asyncio
@@ -70,12 +70,12 @@ async def test_get_chat_room_with_internal_server_error():
         async with AsyncClient(app=app, base_url="http://test") as client:
             response = await client.get("/chat/chat-room", headers={"user-id": user_id})
 
-        assert response.status_code == 500
+        assert response.status_code == HTTPStatus.INTERNAL_SERVER_ERROR.value
         assert response.json() == {
             "type": "GET /chat-room",
             "title": "Internal server error",
             "details": "An error occurred: Unexpected error",
-            "status": 500,
+            "status": HTTPStatus.INTERNAL_SERVER_ERROR.value,
         }
 
 #------------------------ DELETE /chat/chat-room ------------------------
