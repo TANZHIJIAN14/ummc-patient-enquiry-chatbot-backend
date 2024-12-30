@@ -24,7 +24,7 @@ poetry init
 poetry add "fastapi[standard]" fastcrud pymongo \
 confluent-kafka PyPDF2 pinecone pinecone-plugin-assistant \
 flask transformers torch pdfkit instructor InstructorEmbedding ollama \
-sentence_transformers eval_type_backport
+sentence_transformers eval_type_backport pytest
 ```
 
 ## Docker Compose
