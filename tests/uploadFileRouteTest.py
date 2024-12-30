@@ -3,12 +3,9 @@ from io import BytesIO
 import pytest
 from unittest.mock import patch, MagicMock
 from httpx import AsyncClient
-from more_itertools.more import side_effect
 
 from app.main import app  # Replace with your app's main module
 from http import HTTPStatus
-from datetime import datetime
-from bson import ObjectId
 
 #------------------------ GET /upload/file ------------------------
 
