@@ -51,6 +51,8 @@ class FeedbackAnalysisProcessor:
 
         except KeyboardInterrupt:
             print("Kafka consumer interrupted.")
+        except AttributeError as e:
+            print(f"Attribute error: {str(e)}")
         except Exception as e:
             print(f"Error consuming event of Feedback Analysis topic: {e}")
         finally:

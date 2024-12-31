@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from bson import ObjectId
+from bson import ObjectId, errors
 from confluent_kafka.cimpl import Consumer, KafkaError, KafkaException
 from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, KnowledgeRetentionMetric, RoleAdherenceMetric
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
@@ -130,6 +130,8 @@ class EvaluationProcessor:
 
         except KeyboardInterrupt:
             print("Kafka consumer interrupted.")
+        except errors.InvalidId as e:
+            print(f"Invalid id: {str(e)}")
         finally:
             self.consumer.close()
 
