@@ -1,5 +1,5 @@
 from bson import ObjectId
-from confluent_kafka import Consumer, KafkaError, KafkaException
+from confluent_kafka import Consumer
 
 from app.database import feedback_collection
 from app.sentimentanalysis.init import sentiment_analysis

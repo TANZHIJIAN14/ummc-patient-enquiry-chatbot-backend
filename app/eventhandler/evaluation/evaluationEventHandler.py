@@ -2,7 +2,7 @@ from datetime import datetime
 
 from bson import ObjectId, errors
 from confluent_kafka.cimpl import Consumer, KafkaError, KafkaException
-from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, KnowledgeRetentionMetric, RoleAdherenceMetric
+from deepeval.metrics import ConversationRelevancyMetric, ConversationCompletenessMetric, RoleAdherenceMetric
 from deepeval.test_case import ConversationalTestCase, LLMTestCase
 
 from app.database import evaluation_collection, chat_room_collection
@@ -16,7 +16,8 @@ def evaluate_conversation(chat_room_object_id, user_id, chat_room_id, conversati
     llm_test_cases = get_llm_test_cases(conversation)
 
     convo_test_case = ConversationalTestCase(
-        chatbot_role="You are UMMC patient enquiry chatbot. You are capable to answer patient enquiry with your knowledge base",
+        chatbot_role="You are UMMC patient enquiry chatbot. \
+        You are capable to answer patient enquiry with your knowledge base",
         turns=llm_test_cases
     )
 
