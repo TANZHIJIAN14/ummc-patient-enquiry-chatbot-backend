@@ -189,6 +189,9 @@ async def chat(request: MessageReq):
         full_prompt = f"{chat_history}user: {request.prompt}"
 
         response = assistant_chat(full_prompt)
+        if response.status_code != HTTPStatus.OK.value:
+            raise Exception(response.reason)
+
         chat_response_message = response.json()["message"]["content"]
 
         meta_data = None

@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Enhance chat room delete endpoint">
+    <list default="true" id="e5fbd4f3-a131-4836-85f0-cb6d3e070a85" name="Changes" comment="Enhance sentiment analysis">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes/chatRoutes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes/chatRoutes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/chatRoutesTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/chatRoutesTest.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,22 +44,54 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error.executor": "Run",
-    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms.executor": "Run",
-    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id.executor": "Run",
-    "Python tests.Python tests for chatRoutesTest.test_get_chat_room_without_user_id.executor": "Run",
-    "Python.evaluation.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "/Users/jaytan/Documents/UM/YR4_SEM1/FYP_2/ummc-patient-enquiry-chatbot-backend/app",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.Python tests for chatRoutesTest.test_chat_assistant_chat_failure.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_chat_missing_chat_room_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_chat_missing_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_chat_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_chat_unexpected_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_delete_chat_room_failed_chat_room_deletion.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_delete_chat_room_failed_metrics_deletion.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_delete_chat_room_missing_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_delete_chat_room_not_found.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_delete_chat_room_successful.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for chatRoutesTest.test_get_chat_room_without_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for convertUrlRouteTest.test_convert_url_to_pdf_external_api_failure.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for convertUrlRouteTest.test_convert_url_to_pdf_missing_parameters.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for convertUrlRouteTest.test_convert_url_to_pdf_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for evaluationRouteTest.test_get_evaluation_metrics_error_during_retrieval.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for evaluationRouteTest.test_get_evaluation_metrics_missing_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for evaluationRouteTest.test_get_evaluation_metrics_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_get_feedback_error_during_retrieval.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_get_feedback_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_send_feedback_internal_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_send_feedback_missing_message.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_send_feedback_missing_user_id.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for feedbackRouteTest.test_send_feedback_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_get_file_by_gradio_file_path_not_found.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_get_file_by_gradio_file_path_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_get_file_empty_result.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_get_file_internal_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_get_file_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_upload_file_internal_error.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_upload_file_mongo_insert_failure.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_upload_invalid_file_format.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests for uploadFileRouteTest.test_upload_pdf_file_success.executor&quot;: &quot;Run&quot;,
+    &quot;Python.evaluation.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/jaytan/Documents/UM/YR4_SEM1/FYP_2/ummc-patient-enquiry-chatbot-backend/tests&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/tests" />
       <recent name="$PROJECT_DIR$/app" />
       <recent name="$PROJECT_DIR$/custom-llm/mistralai/Mistral-7B-Instruct-v0.3" />
       <recent name="$PROJECT_DIR$/custom-llm" />
@@ -80,59 +110,7 @@
       <command value="pip install poetry deepeval" />
     </option>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error">
-    <configuration name="evaluation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="chatbot-service" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/evaluation.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ummc-patient-enquiry-chatbot-backend" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_with_internal_server_error&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
-    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
-      <module name="ummc-patient-enquiry-chatbot-backend" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_with_no_chat_rooms&quot;" />
-      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id">
     <configuration name="Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ummc-patient-enquiry-chatbot-backend" />
       <option name="ENV_FILES" value="" />
@@ -148,7 +126,7 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="Python tests for chatRoutesTest.test_get_chat_room_without_user_id" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+    <configuration name="Python tests for uploadFileRouteTest.test_upload_file_internal_error" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
       <module name="ummc-patient-enquiry-chatbot-backend" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -159,17 +137,62 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;chatRoutesTest.test_get_chat_room_without_user_id&quot;" />
+      <option name="_new_target" value="&quot;uploadFileRouteTest.test_upload_file_internal_error&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for uploadFileRouteTest.test_upload_file_mongo_insert_failure" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;uploadFileRouteTest.test_upload_file_mongo_insert_failure&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for uploadFileRouteTest.test_upload_invalid_file_format" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;uploadFileRouteTest.test_upload_invalid_file_format&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python tests for uploadFileRouteTest.test_upload_pdf_file_success" type="tests" factoryName="Autodetect" temporary="true" nameIsGenerated="true">
+      <module name="ummc-patient-enquiry-chatbot-backend" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;uploadFileRouteTest.test_upload_pdf_file_success&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_internal_server_error" />
-        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_no_chat_rooms" />
-        <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_without_user_id" />
         <item itemvalue="Python tests.Python tests for chatRoutesTest.test_get_chat_room_with_valid_user_id" />
-        <item itemvalue="Python.evaluation" />
+        <item itemvalue="Python tests.Python tests for uploadFileRouteTest.test_upload_file_mongo_insert_failure" />
+        <item itemvalue="Python tests.Python tests for uploadFileRouteTest.test_upload_file_internal_error" />
+        <item itemvalue="Python tests.Python tests for uploadFileRouteTest.test_upload_invalid_file_format" />
+        <item itemvalue="Python tests.Python tests for uploadFileRouteTest.test_upload_pdf_file_success" />
       </list>
     </recent_temporary>
   </component>
@@ -405,24 +428,103 @@
       <option name="project" value="LOCAL" />
       <updated>1735484653980</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Implement chat route test cases">
+      <option name="closed" value="true" />
+      <created>1735572868393</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1735572868393</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Implement convert url route test cases">
+      <option name="closed" value="true" />
+      <created>1735573886596</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1735573886596</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Implement evaluation route test cases">
+      <option name="closed" value="true" />
+      <created>1735574898746</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1735574898746</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Implement evaluation route test cases">
+      <option name="closed" value="true" />
+      <created>1735575064000</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1735575064000</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Implement feedback route test cases">
+      <option name="closed" value="true" />
+      <created>1735577437787</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1735577437787</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Implement upload file route test cases">
+      <option name="closed" value="true" />
+      <created>1735578801876</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1735578801876</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Implement upload file route test cases">
+      <option name="closed" value="true" />
+      <created>1735579818320</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1735579818320</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Minor changes">
+      <option name="closed" value="true" />
+      <created>1735579873477</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1735579873477</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Delete custom llm folder">
+      <option name="closed" value="true" />
+      <created>1735642379808</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1735642379808</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Enhance event listener error handling">
+      <option name="closed" value="true" />
+      <created>1735643955577</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1735643955577</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Enhance sentiment analysis">
+      <option name="closed" value="true" />
+      <created>1736067891353</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1736067891353</updated>
+    </task>
+    <option name="localTasksCounter" value="39" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enhance delete endpoint" />
-    <MESSAGE value="enhance docker compose" />
-    <MESSAGE value="minor docker update" />
-    <MESSAGE value="Update kafka heap opts" />
-    <MESSAGE value="Update docker compose" />
-    <MESSAGE value="Minor update" />
-    <MESSAGE value="Refactor docker" />
-    <MESSAGE value="Update kafka script" />
     <MESSAGE value="Added get chat room with user id endpoint" />
     <MESSAGE value="Implement delete chat room endpoint" />
     <MESSAGE value="Enhance get chat room logic" />
     <MESSAGE value="Implement upload feedback endpoint" />
     <MESSAGE value="Enhance upload file endpoint exception handling" />
-    <MESSAGE value="Minor changes" />
     <MESSAGE value="Implement subscribe file api" />
     <MESSAGE value="Enhance upload file handling" />
     <MESSAGE value="Add delete file with gradio file path endpoint" />
@@ -434,6 +536,15 @@
     <MESSAGE value="Implement convert url to pdf endpoint" />
     <MESSAGE value="Implement chatbot deepeval testing" />
     <MESSAGE value="Enhance chat room delete endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance chat room delete endpoint" />
+    <MESSAGE value="Implement chat route test cases" />
+    <MESSAGE value="Implement convert url route test cases" />
+    <MESSAGE value="Implement evaluation route test cases" />
+    <MESSAGE value="Implement feedback route test cases" />
+    <MESSAGE value="Implement upload file route test cases" />
+    <MESSAGE value="Minor changes" />
+    <MESSAGE value="Delete custom llm folder" />
+    <MESSAGE value="Enhance event listener error handling" />
+    <MESSAGE value="Enhance sentiment analysis" />
+    <option name="LAST_COMMIT_MESSAGE" value="Enhance sentiment analysis" />
   </component>
 </project>
