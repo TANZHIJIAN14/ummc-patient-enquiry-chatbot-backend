@@ -1,7 +1,7 @@
 import requests
 from app.config import config
 
-PINECONE_ASSISTANCE_NAME = "demo-assistance"
+PINECONE_ASSISTANCE_NAME = "ummc-chatbot"
 
 def get_assistant_file():
     # Get file of the assistant

@@ -152,6 +152,19 @@ async def delete_chat_room(chat_room_id, user_id = Header()):
             ).model_dump()
         )
 
+    deleted_evaluation = evaluation_collection.find_one(query)
+
+    if deleted_evaluation is None:
+        return JSONResponse(
+            status_code=HTTPStatus.NOT_FOUND.value,
+            content=ProblemDetail(
+                type="DELETE /chat",
+                title="Chat evaluation not found",
+                details=f"Chat room with ID: {chat_room_id} is not found",
+                status=HTTPStatus.NOT_FOUND.value
+            ).model_dump()
+        )
+
     result_delete_chat_room = chat_room_collection.delete_one(query)
 
     result_delete_metrics = evaluation_collection.delete_one(query)
@@ -190,6 +203,7 @@ async def chat(request: MessageReq):
 
         response = assistant_chat(full_prompt)
         if response.status_code != HTTPStatus.OK.value:
+            print(f"Failed to send prompt: {response.json()}")
             raise Exception(response.reason)
 
         chat_response_message = response.json()["message"]["content"]
